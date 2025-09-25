@@ -2833,14 +2833,26 @@ else:
         target*: Element
         isIntersecting*: bool
         intersectionRatio*: float
+        boundingClientRect*: DOMRect
+        intersectionRect*: DOMRect
+        rootBounds*: DOMRect
+        time*: float
+
+      IntersectionObserverInit* = ref object
+        root*: Element
+        rootMargin*: cstring
+        threshold*: seq[float]
 
       IntersectionCallback* = proc(entries: seq[IntersectionObserverEntry], observer: IntersectionObserver) {.closure.}
       IntersectionObserver* = ref object
 
+    proc newIntersectionObserverInit*(): IntersectionObserverInit {.importjs: "({})", nodecl.}
     proc newIntersectionObserver*(callback: IntersectionCallback): IntersectionObserver {.importjs: "new IntersectionObserver(#)".}
+    proc newIntersectionObserver*(callback: IntersectionCallback, options: IntersectionObserverInit): IntersectionObserver {.importjs: "new IntersectionObserver(#, #)".}
     proc observe*(observer: IntersectionObserver, target: Element) {.importjs: "#.observe(@)".}
+    proc unobserve*(observer: IntersectionObserver, target: Element) {.importjs: "#.unobserve(@)".}
     proc disconnect*(observer: IntersectionObserver) {.importjs: "#.disconnect()".}
-
+    proc takeRecords*(observer: IntersectionObserver): seq[IntersectionObserverEntry] {.importjs: "#.takeRecords()".}
 
     proc len*(x: Node): int {.importcpp: "#.childNodes.length".}
     proc `[]`*(x: Node; idx: int): Element {.importcpp: "#.childNodes[#]".}
@@ -3066,6 +3078,8 @@ else:
 
     {.pop.}
 
+    proc alert*(msg: cstring) {.importcpp: "window.alert(#)".}
+
     proc setAttr*(n: Node; key, val: cstring) {.importcpp: "#.setAttribute(@)".}
 
     var
@@ -3166,14 +3180,26 @@ else:
         target*: Element
         isIntersecting*: bool
         intersectionRatio*: float
+        boundingClientRect*: DOMRect
+        intersectionRect*: DOMRect
+        rootBounds*: DOMRect
+        time*: float
+
+      IntersectionObserverInit* = ref object
+        root*: Element
+        rootMargin*: cstring
+        threshold*: seq[float]
 
       IntersectionCallback* = proc(entries: seq[IntersectionObserverEntry], observer: IntersectionObserver) {.closure.}
       IntersectionObserver* = ref object
 
+    proc newIntersectionObserverInit*(): IntersectionObserverInit = discard
     proc newIntersectionObserver*(callback: IntersectionCallback): IntersectionObserver = discard
+    proc newIntersectionObserver*(callback: IntersectionCallback, options: IntersectionObserverInit): IntersectionObserver = discard
     proc observe*(observer: IntersectionObserver, target: Element) = discard
+    proc unobserve*(observer: IntersectionObserver, target: Element) = discard
     proc disconnect*(observer: IntersectionObserver) = discard
-
+    proc takeRecords*(observer: IntersectionObserver): seq[IntersectionObserverEntry] = discard
 
 
     proc len*(x: Node): int = discard
