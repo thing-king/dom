@@ -2760,6 +2760,88 @@ when defined(nodejs):
 
 else:
   when defined(js):
+
+    # Dates
+    type
+      Date* = ref object
+    proc now*(): float {.importjs: "Date.now()".}
+    proc now*(d: typedesc[Date]): float {.importjs: "Date.now()".}
+
+    # Observers API
+    type
+      DOMRect* = ref object
+        x*: float
+        y*: float
+        width*: float
+        height*: float
+        top*: float
+        right*: float
+        bottom*: float
+        left*: float
+    
+    type
+      MutationRecord* = ref object
+        `type`*: cstring
+        target*: Node
+        addedNodes*: seq[Node]
+        removedNodes*: seq[Node]
+        previousSibling*: Node
+        nextSibling*: Node
+        attributeName*: cstring
+        attributeNamespace*: cstring
+        oldValue*: cstring
+
+      MutationObserverInit* = ref object
+        childList*: bool
+        attributes*: bool
+        characterData*: bool
+        subtree*: bool
+        attributeOldValue*: bool
+        characterDataOldValue*: bool
+        attributeFilter*: seq[cstring]
+
+      MutationCallback* = proc(mutations: seq[MutationRecord], observer: MutationObserver) {.closure.}
+
+      MutationObserver* = ref object
+
+    # Constructor
+    proc newMutationObserver*(callback: MutationCallback): MutationObserver {.importjs: "new MutationObserver(#)".}
+
+    # Methods
+    proc observe*(observer: MutationObserver, target: Node, options: MutationObserverInit) {.importjs: "#.observe(@)".}
+    proc disconnect*(observer: MutationObserver) {.importjs: "#.disconnect()".}
+    proc takeRecords*(observer: MutationObserver): seq[MutationRecord] {.importjs: "#.takeRecords()".}
+
+    # Helper to create options object
+    proc initMutationObserverInit*(): MutationObserverInit {.importjs: "({})", nodecl.}
+
+    type
+      ResizeObserverEntry* = ref object
+        target*: Element
+        contentRect*: DOMRect
+
+      ResizeCallback* = proc(entries: seq[ResizeObserverEntry], observer: ResizeObserver) {.closure.}
+      ResizeObserver* = ref object
+
+    proc newResizeObserver*(callback: ResizeCallback): ResizeObserver {.importjs: "new ResizeObserver(#)".}
+    proc observe*(observer: ResizeObserver, target: Element) {.importjs: "#.observe(@)".}
+    proc disconnect*(observer: ResizeObserver) {.importjs: "#.disconnect()".}
+
+    # IntersectionObserver
+    type
+      IntersectionObserverEntry* = ref object
+        target*: Element
+        isIntersecting*: bool
+        intersectionRatio*: float
+
+      IntersectionCallback* = proc(entries: seq[IntersectionObserverEntry], observer: IntersectionObserver) {.closure.}
+      IntersectionObserver* = ref object
+
+    proc newIntersectionObserver*(callback: IntersectionCallback): IntersectionObserver {.importjs: "new IntersectionObserver(#)".}
+    proc observe*(observer: IntersectionObserver, target: Element) {.importjs: "#.observe(@)".}
+    proc disconnect*(observer: IntersectionObserver) {.importjs: "#.disconnect()".}
+
+
     proc len*(x: Node): int {.importcpp: "#.childNodes.length".}
     proc `[]`*(x: Node; idx: int): Element {.importcpp: "#.childNodes[#]".}
     proc getElementById*(id: cstring): Element {.importc: "document.getElementById", nodecl.}
@@ -3011,6 +3093,89 @@ else:
 
     
     # proc closest*(self: Node; cssSelector: cstring): Node = discard
+
+
+    # Dates
+    type
+      Date* = ref object
+    proc now*(): float = discard
+    proc now*(d: typedesc[Date]): float = discard
+
+    # Observers API
+    type
+      DOMRect* = ref object
+        x*: float
+        y*: float
+        width*: float
+        height*: float
+        top*: float
+        right*: float
+        bottom*: float
+        left*: float
+    type
+      MutationRecord* = ref object
+        `type`*: cstring
+        target*: Node
+        addedNodes*: seq[Node]
+        removedNodes*: seq[Node]
+        previousSibling*: Node
+        nextSibling*: Node
+        attributeName*: cstring
+        attributeNamespace*: cstring
+        oldValue*: cstring
+
+      MutationObserverInit* = ref object
+        childList*: bool
+        attributes*: bool
+        characterData*: bool
+        subtree*: bool
+        attributeOldValue*: bool
+        characterDataOldValue*: bool
+        attributeFilter*: seq[cstring]
+
+      MutationCallback* = proc(mutations: seq[MutationRecord], observer: MutationObserver) {.closure.}
+
+      MutationObserver* = ref object
+
+    # Constructor
+    proc newMutationObserver*(callback: MutationCallback): MutationObserver = discard
+
+    # Methods
+    proc observe*(observer: MutationObserver, target: Node, options: MutationObserverInit) = discard
+    proc disconnect*(observer: MutationObserver) = discard
+    proc takeRecords*(observer: MutationObserver): seq[MutationRecord] = discard
+
+    # Helper to create options object
+    proc initMutationObserverInit*(): MutationObserverInit = discard
+
+    type
+      ResizeObserverEntry* = ref object
+        target*: Element
+        contentRect*: DOMRect
+
+      ResizeCallback* = proc(entries: seq[ResizeObserverEntry], observer: ResizeObserver) {.closure.}
+      ResizeObserver* = ref object
+
+    proc newResizeObserver*(callback: ResizeCallback): ResizeObserver = discard
+    proc observe*(observer: ResizeObserver, target: Element) = discard
+    proc disconnect*(observer: ResizeObserver) = discard
+
+    # IntersectionObserver
+    type
+      IntersectionObserverEntry* = ref object
+        target*: Element
+        isIntersecting*: bool
+        intersectionRatio*: float
+
+      IntersectionCallback* = proc(entries: seq[IntersectionObserverEntry], observer: IntersectionObserver) {.closure.}
+      IntersectionObserver* = ref object
+
+    proc newIntersectionObserver*(callback: IntersectionCallback): IntersectionObserver = discard
+    proc observe*(observer: IntersectionObserver, target: Element) = discard
+    proc disconnect*(observer: IntersectionObserver) = discard
+
+
+
     proc len*(x: Node): int = discard
     proc `[]`*(x: Node; idx: int): Element = discard
     proc getElementById*(id: cstring): Element = discard
@@ -3039,6 +3204,7 @@ else:
 
      # Window "methods"
     proc alert*(w: Window, msg: cstring) = discard
+    proc alert*(msg: cstring) = discard
     proc back*(w: Window) = discard
     proc blur*(w: Window) = discard
     proc clearInterval*(w: Window, interval: Interval) = discard
