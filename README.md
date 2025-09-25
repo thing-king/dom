@@ -1,4 +1,4 @@
-# thing-king/dom
+# dom
 
 **thing-king/dom** is a drop-in, cross-target replacement for Nim’s [`std/dom`](https://nim-lang.org/docs/dom.html).  
 It exposes the full set of DOM environment procedures (e.g., `getElementById`, `querySelector`, etc.) in both **native** and **JavaScript** compilation targets.
